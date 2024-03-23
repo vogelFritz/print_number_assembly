@@ -37,12 +37,15 @@ print_number:
     ; Allocate space for local variables
     sub rsp, 12      ; numberstr variable: 10 digit (max) number string (2 bytes for endl and \0)
 
-    mov byte [rbp - 12], 0
-    mov byte [rbp - 11], 10
+    xor rsi, rsi
+    shl rsi, 8
+    mov sil, 10
+    shl rsi, 8
 
     push rax
     call get_ascii_digits_loop
-    pop rax
+    
+    mov qword [rbp - 12], rsi
 
     ; Print resulting string
     mov rax, 1 ; sys_write
@@ -51,9 +54,11 @@ print_number:
     mov rdx, 12 ;message length
     syscall
 
+    pop rax
     ; Epilogue: Restore the stack pointer and base pointer
     mov rsp, rbp    ; Restore the stack pointer
     pop rbp         ; Restore the base pointer
+    ret
 
 ; Loop for print_number
 get_ascii_digits_loop:
@@ -66,7 +71,8 @@ main_loop:
     add edx, 48 ; convert edx (1 digit) int to char
 
     sub rbp, rcx
-    mov byte [rbp], dl ; Store char
+    mov sil, dl ; Store char
+    shl rsi, 8 
     add rbp, rcx
 
     sub ecx, 1 ; Decrement index (to store next char)
