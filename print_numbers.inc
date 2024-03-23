@@ -1,6 +1,5 @@
 section .text
-global print_number
-;global _start
+global _start
 _start:
     ; Prologue: Allocate space for local variables on the stack
     push rbp        ; Save the base pointer
